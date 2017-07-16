@@ -55,7 +55,7 @@ public class Menu{
 
 		switch (num){
 			case 1 : //クエストID入力
-				text.addText(player, "クエストIDを入力してください。", pos);
+				text.addText(player, "受注したいクエストIDを入力してください。", pos);
 				new Main().addSound(player, new ClickSound(pos));
 				/*ID入力*/
 
