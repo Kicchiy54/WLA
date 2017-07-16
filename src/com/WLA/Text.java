@@ -16,12 +16,13 @@ public class Text {
 	Vector3 Next = new Vector3(308.5, 5, 296.5); //NEXTの文字の座標
 	Vector3 Select = new Vector3(308.5, 5, 300.5); //SELECTの〃
 
-	HashMap<String, HashMap<Vector3, Long>>Parent = new HashMap<String, HashMap<Vector3, Long>>();
+	static HashMap<String, HashMap<Vector3, Long>>Parent = new HashMap<String, HashMap<Vector3, Long>>();
 	//プレイヤーの名前(String型)をキーにして中身にさらに配列(多次元配列) 中身は座標(Vector3型)をキーにして値はEntityID(Long型)
 
 	public void addText(Player player, String text, Vector3 pos){//FloatingTextを追加する関数
 
 		HashMap<Vector3, Long>child = Parent.get(player.getName());
+
         if(child.containsKey(pos)){//座標のキーが存在するか？
         	//存在する場合、同じ座標にTextが被ってはいけないため、もともとあったEIDを使用して上書き
         	Long eid = child.get(pos);
@@ -47,7 +48,7 @@ public class Text {
 		if(child.containsKey(pos)){//本当に引数のposはParentに存在しているか？
 			Long eid = child.get(pos);
 			RemoveEntityPacket pk = new RemoveEntityPacket();
-			pk.eid = eid;
+			pk.entityRuntimeId = eid;
 			player.dataPacket(pk);
 			child.remove(pos);
 			Parent.put(player.getName(), child);//posを削除したchildをParentに挿入
@@ -106,6 +107,15 @@ public class Text {
         setNPC(player, eid1, "§l>>§6§lクエストカウンター§r§l<<\n§r§aクエストの受注\n§r§7クエストに参加", new Vector3((float)Monitor.x, (float)Monitor.y, (float)Monitor.z));
         setNPC(player, eid2, "§e§lSELECT", new Vector3((float)Select.x, (float)Select.y, (float)Select.z));
         setNPC(player, eid3, "§b§lNEXT", new Vector3((float)Next.x, (float)Next.y, (float)Next.z));
+
+        new Menu().setMenuNumber(player, 1);//メニューナンバーをセット
+	}
+
+
+	public void allRemove(Player player){//Monitor,Next,Selectを削除(主にWorld移動時など)
+		removeText(player, Monitor);
+		removeText(player, Next);
+		removeText(player, Select);
 	}
 
 }
