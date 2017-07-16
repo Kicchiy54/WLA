@@ -11,6 +11,7 @@ import cn.nukkit.event.Listener;
 import cn.nukkit.event.entity.EntityLevelChangeEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerJoinEvent;
+import cn.nukkit.event.player.PlayerChatEvent;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.sound.Sound;
 import cn.nukkit.math.Vector3;
@@ -50,6 +51,12 @@ public class Main extends PluginBase implements Listener{
 
     }
 
+    @EventHandler
+	public void onChat(PlayerChatEvent event){
+
+    	//Chatを送信した時の処理
+    	Player player = event.getPlayer();
+	}
 
     @EventHandler
     public void onInteract(PlayerInteractEvent event){
