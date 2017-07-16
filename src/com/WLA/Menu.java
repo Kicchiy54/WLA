@@ -31,14 +31,17 @@ public class Menu{
 
 		Vector3 pos = text.Monitor;//モニターの座標
 
-		if(num == 1){//初期画面(Join時のまま)
-			setMenuNumber(player, 2);
-			text.addText(player, "§l>>§6クエストカウンター§r§l<<\n§r§7クエストの受注\n§aクエストに参加", pos);
-			new Main().addSound(player, new ClickSound(pos));
-		}else if(num == 2){
-			setMenuNumber(player, 1);
-			text.addText(player, "§l>>§6クエストカウンター§r§l<<\n§r§aクエストの受注\n§7クエストに参加", pos);
-			new Main().addSound(player, new ClickSound(pos));
+		switch(num){//初期画面(Join時のまま)
+			case 1 :
+				setMenuNumber(player, 2);
+				text.addText(player, "§l>>§6クエストカウンター§r§l<<\n§r§7クエストの受注\n§aクエストに参加", pos);
+				new Main().addSound(player, new ClickSound(pos));
+				break;
+			case 2 :
+				setMenuNumber(player, 1);
+				text.addText(player, "§l>>§6クエストカウンター§r§l<<\n§r§aクエストの受注\n§7クエストに参加", pos);
+				new Main().addSound(player, new ClickSound(pos));
+				break;
 		}
 
 	}
