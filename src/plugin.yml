@@ -1,5 +1,5 @@
-name: WLA
-main: com.WLA.Main
-version: 1.0.0
-author: Kicchiy
+name: WLA 
+main: com.WLA.Main 
+version: 1.0.0 
+author: Kicchiy 
 api: ["1.0.0"]

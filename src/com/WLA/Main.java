@@ -11,7 +11,6 @@ import cn.nukkit.event.Listener;
 import cn.nukkit.event.entity.EntityLevelChangeEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerJoinEvent;
-import cn.nukkit.event.player.PlayerChatEvent;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.sound.Sound;
 import cn.nukkit.math.Vector3;
@@ -22,6 +21,7 @@ public class Main extends PluginBase implements Listener{
 
 	Text text = new Text();
 	Menu menu = new Menu();
+	PlayerSkin ps = new PlayerSkin();
 
 	String MainWorldName = "Main";//Monitor,Next,Select等を表示するメインのワールド
 
@@ -30,6 +30,7 @@ public class Main extends PluginBase implements Listener{
 
 	Vector3 NextBlockPos = new Vector3(308.0, 5.0, 296.0); //NEXTの文字の座標
 	Vector3 SelectBlockPos = new Vector3(308.0, 5.0, 300.0); //SELECTの〃
+
 
 	HashMap<String, Integer>MenuNumber = new HashMap<String, Integer>();
 
@@ -48,15 +49,11 @@ public class Main extends PluginBase implements Listener{
     	//Join時の処理
     	Player player = event.getPlayer();
     	text.firstProcess(player);
+    	ps.saveSkin(player);
 
     }
 
-    @EventHandler
-	public void onChat(PlayerChatEvent event){
 
-    	//Chatを送信した時の処理
-    	Player player = event.getPlayer();
-	}
 
     @EventHandler
     public void onInteract(PlayerInteractEvent event){
