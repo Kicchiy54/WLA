@@ -31,9 +31,7 @@ public class Main extends PluginBase implements Listener{
 	Vector3 NextBlockPos = new Vector3(308.0, 5.0, 296.0); //NEXTの文字の座標
 	Vector3 SelectBlockPos = new Vector3(308.0, 5.0, 300.0); //SELECTの〃
 
-
-	HashMap<String, Integer>MenuNumber = new HashMap<String, Integer>();
-
+	static HashMap<String, String>PlayerStatus = new HashMap<String, String>();
 
 	public void onEnable(){
 
@@ -67,7 +65,7 @@ public class Main extends PluginBase implements Listener{
     		}
     	}else if(block.getId() == SelectBlockID){//SELECTをタッチしたら
     		if(pos.x == SelectBlockPos.x && pos.y == SelectBlockPos.y && pos.z == SelectBlockPos.z){
-    			//menu.selectMenu(player, menu.getMenuNumber(player)); コード未記入
+    			menu.selectMenu(player, menu.getMenuNumber(player));
     		}
     	}
 
@@ -100,6 +98,25 @@ public class Main extends PluginBase implements Listener{
     	ps[0] = player;
     	player.getLevel().addSound(sound, ps);
     	//addSoundの第2引数にPlayer[]を入れることでPlayer[]の中に入ってる人にだけ音が聞こえる
+
+    }
+
+
+    public void setStatus(Player player, String status){
+
+    	/*プレイヤーの状態をセットする
+    	 * "WaitingQuestID" => クエストIDの発言待ち
+    	 *
+    	 */
+
+		PlayerStatus.put(player.getName(), status);
+
+    }
+
+
+    public String getStatus(Player player){
+
+    	return PlayerStatus.get(player.getName());
 
     }
 
