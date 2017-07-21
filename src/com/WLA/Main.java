@@ -9,18 +9,23 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.entity.EntityLevelChangeEvent;
+import cn.nukkit.event.player.PlayerChatEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerJoinEvent;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.sound.AnvilUseSound;
 import cn.nukkit.level.sound.Sound;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.plugin.PluginBase;
+
+import com.WLA.Quest.Quest;
 
 
 public class Main extends PluginBase implements Listener{
 
 	Text text = new Text();
 	Menu menu = new Menu();
+	Quest quest = new Quest();
 	PlayerSkin ps = new PlayerSkin();
 
 	String MainWorldName = "Main";//Monitor,Next,Select等を表示するメインのワールド
@@ -32,6 +37,9 @@ public class Main extends PluginBase implements Listener{
 	Vector3 SelectBlockPos = new Vector3(308.0, 5.0, 300.0); //SELECTの〃
 
 	static HashMap<String, String>PlayerStatus = new HashMap<String, String>();
+	//プレイヤーの状態を保存
+	static HashMap<String, Quest>TemporaryQuest = new HashMap<String, Quest>();
+	//プレイヤーがクエストを受注する時にどのクエストを受けるかの一時保存用
 
 	public void onEnable(){
 
@@ -69,6 +77,63 @@ public class Main extends PluginBase implements Listener{
     		}
     	}
 
+    	//player.sendMessage(pos.x + ", " + pos.y + ", " + pos.z);
+
+    }
+
+
+    @EventHandler
+    public boolean onChat(PlayerChatEvent event){
+
+    	Player player = event.getPlayer();
+    	if(getStatus(player) == "WaitingQuestID"){
+    		event.setCancelled();
+    		String chat = event.getMessage();
+
+    		try{//chatを数字に変えれるか->変えられない(=数字以外)は弾く
+    			Integer.parseInt(chat);
+    		}catch(NumberFormatException e){
+    		    player.sendMessage("§c§l有効な数字を入力してください");
+    		    return false;
+    		}
+    		int num = Integer.parseInt(chat);
+
+    		try {
+    			quest.getQuestByID(num);
+    		} catch (ArrayIndexOutOfBoundsException e) {
+    			player.sendMessage("§c§l指定されたIDのクエストは存在しません");
+    		    return false;
+    		}
+
+    		menu.setMenuNumber(player, 5);
+    		new Main().addSound(player, new AnvilUseSound(text.Monitor));
+    		Quest newquest = quest.getQuestByID(num);
+
+    		String armor = "";
+    		if(newquest.getQuest_Armor()){
+    			armor = "なし";
+    		}else{
+    			armor = "あり";
+    		}
+
+    		String difficult = "";
+    		for(int i = 0; i < newquest.getQuest_Difficulty(); i++){
+    			difficult = difficult + "✪";
+    		}
+
+    		String menutext = "§l>>§r§eこのクエストを受注しますか？§r§l<<§r\n" +
+    					  "クエスト名:§6§l" + newquest.getQuest_Name() + "§r\n" +
+    					  "ターゲット:§b§l" + newquest.getQuest_Target() + "§r\n" +
+    					  "フィールド:§b§l" + newquest.getQuest_Field_Name() + "§r\n" +
+    					  "最大人数:§b§l" + newquest.getQuest_Max() + "§r\n" +
+    					  "装備:§b§l" + armor + "§r\n" +
+    					  "難易度:§b§l" + difficult + "§r\n" +
+    					  " §cNEXTで戻る§r/§aSELECTで受注";
+    		text.addText(player, menutext, text.Monitor);
+    		setTemporaryQuest(player, newquest);
+    		setStatus(player, "Normal");
+    	}
+    	return false;
     }
 
 
@@ -106,7 +171,8 @@ public class Main extends PluginBase implements Listener{
 
     	/*プレイヤーの状態をセットする
     	 * "WaitingQuestID" => クエストIDの発言待ち
-    	 *
+    	 * "Normal" => 通常状態
+    	 * "CreateRoom" => ルームに参加中(ホスト)
     	 */
 
 		PlayerStatus.put(player.getName(), status);
@@ -117,6 +183,29 @@ public class Main extends PluginBase implements Listener{
     public String getStatus(Player player){
 
     	return PlayerStatus.get(player.getName());
+
+    }
+
+
+    public void setTemporaryQuest(Player player, Quest quest){//temporaryは仮という意味
+
+    	//プレイヤーがQuestIDを入力->ルームに移動までクエストを保存しておく必要が有るため
+
+		TemporaryQuest.put(player.getName(), quest);
+
+    }
+
+
+    public Quest getTemporaryQuest(Player player){
+
+    	return TemporaryQuest.get(player.getName());
+
+    }
+
+
+    public void removeTemporaryQuest(Player player){
+
+    	TemporaryQuest.remove(player.getName());
 
     }
 
